@@ -1,0 +1,140 @@
+// pamper or punish your pet
+// website that you can pamper or punish
+
+function requestHandler(request, response) {
+    if (request.method == "GET"){
+    response.send(200, @"<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=""utf-8"">
+<title> CAT ME IF YOU CAN </title>
+<style>
+
+html {
+    font-size: 6px;
+}
+
+body{
+    width: 140rem;
+    max-width: 90%;
+    margin: 0 auto;
+    padding-top: 10%;
+}
+
+
+.button{
+    background-image: -webkit-linear-gradient(top, #f4f1ee, #fff);
+    background-image: linear-gradient(top, #f4f1ee, #fff);
+    border-radius: 50%;
+    box-shadow: 0rem 8rem 10rem 0rem rgba(0, 0, 0, .3), inset 0rem 4rem 1rem 1rem white, inset 0rem -3rem 1rem 1rem rgba(204,198,197,.5);
+    float:left;
+    height: 70rem;
+    margin: 0 0 15rem 0;
+    position: relative;
+    width: 70rem;
+    -webkit-transition: all .1s linear;
+    transition: all .1s linear;
+}
+
+.button:after{
+    color:#e9e6e4;
+    content: '';
+    display: block;
+    font-size: 50rem;
+    height: 30rem;
+    text-decoration: none;
+    text-shadow: 0rem -1rem 1rem #bdb5b4, 1rem 1rem 1rem white;
+    position: absolute;
+    width: 30rem;
+    transition: color 0.3s linear;
+}
+
+
+.heart:after{
+    content: ""❤"";
+    left: 15rem;
+    top: 10rem;
+}
+
+.cross:after{
+    content: ""✖"";
+    left: 14rem;
+    top: 9rem;
+}
+
+.button:hover{
+    background-image: -webkit-linear-gradient(top, #fff, #f4f1ee);
+    background-image: linear-gradient(top, #fff, #f4f1ee);
+    color:#0088cc;
+}
+
+.heart:hover:after{
+    color:#f94e66;
+    text-shadow:0rem 0rem 6rem #f94e66;
+}
+
+.flower:hover:after{
+    color:#f99e4e;
+    text-shadow:0rem 0rem 6rem #f99e4e;
+}
+
+.tick:hover:after{
+    color:#83d244;
+    text-shadow:0rem 0rem 6rem #83d244;
+}
+
+.cross:hover:after{
+    color:#eb2f2f;
+    text-shadow:0rem 0rem 6rem #eb2f2f;
+}
+
+.button:active{
+    background-image: -webkit-linear-gradient(top, #efedec, #f7f4f4);
+    background-image: linear-gradient(top, #efedec, #f7f4f4);
+    box-shadow: 0 3rem 5rem 0 rgba(0,0,0,.4), inset 0rem -3rem 1rem 1rem rgba(204,198,197,.5);
+}
+
+.button:active:after{
+    color:#dbd2d2;
+    text-shadow: 0rem -1rem 1rem #bdb5b4, 0rem 1rem 1rem white;
+}
+
+</style>
+</head>
+<body>
+
+<a href=""#"" class=""button heart"" onclick=""submit('pamper');""></a>
+<a href=""#"" class=""button cross"" onclick=""submit('punish');""></a>
+
+</body>
+<script>
+    function submit(action) {
+        var URL = ""https://agent.electricimp.com/ULPGUhFOd5sL?action="" + action;
+        var xmlHttp = null;
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( ""POST"", URL, false );
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+</script>
+</html>")
+server.log("got a GET")
+        
+    } else {
+        //server.log("got a POST");
+        response.send(200, "OK");
+        if ("action" in request.query) {
+            if (request.query.action == "pamper") {
+                device.send("pamper", 1.1);
+                //server.log("pampered");
+            }
+            else if (request.query.action == "punish") {
+                device.send("punish", 1.1);
+                //server.log("punished");
+            }
+        }
+    }
+}
+ 
+// register the HTTP handler
+http.onrequest(requestHandler); 

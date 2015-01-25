@@ -1,0 +1,82 @@
+soon <- 0.1;
+pulse <- 1;
+beating <- hardware.pin5;
+beating.configure(DIGITAL_OUT);
+withYourStress <- 1;
+scream <- 0;
+screaming <- hardware.pin1;
+screaming.configure(DIGITAL_OUT);
+blush <- 0;
+blushing <- hardware.pin7;
+blushing.configure(DIGITAL_OUT);
+isItWinning <- 0;
+forHowLongHasItWon <- 0;
+pointsOfStress <- 0;
+pointsOfApathy <- 0;
+pointsOfRelaxation <- 0;
+
+function LetYourHeartBeat() {
+    pulse = 1- pulse;
+    beating.write(pulse);
+    screaming.write(scream);
+    blushing.write(blush+1);
+    if (blush)
+        blush -= 1;
+    if (scream)
+        scream -= 1;
+    
+    if (withYourStress > 2.0) {
+        pointsOfStress -= 10;
+        withYourStress = 1;
+        server.log("Scream and let Stress lose to release: "+pointsOfStress.tostring());
+        scream = 2;
+    } else if (withYourStress < 1.0/2.0) {
+        pointsOfRelaxation -= 10;
+        withYourStress = 1;
+        server.log("Blush and let Relaxation lose to embarassment: "+pointsOfRelaxation.tostring());
+        blush = 10;
+    }
+    
+    if (isItWinning <= 0 && withYourStress > 1.1) {
+        isItWinning = 1;
+        forHowLongHasItWon = 1;
+    } else if (isItWinning >= 0 && withYourStress < 1.0/1.1) {
+        isItWinning = -1;
+        forHowLongHasItWon = 1;
+    } else if (withYourStress < 1.0/1.1 && withYourStress > 1.1) {
+        isItWinning = 0;
+        forHowLongHasItWon = 1;
+    } else
+        forHowLongHasItWon += 1;
+    
+    if (forHowLongHasItWon > 10) {
+        forHowLongHasItWon = 0
+        if (isItWinning > 0) {
+            pointsOfStress += 1;
+            server.log("Stress has a point. "+pointsOfStress.tostring());
+        } else if (isItWinning < 0) {
+            pointsOfRelaxation += 1;
+            server.log("Relaxation has a point. "+pointsOfRelaxation.tostring());
+        } else {
+            pointsOfApathy += 1; 
+            server.log("Apathy has a point. "+pointsOfApathy.tostring());
+        }
+    }
+    
+    if (pulse || blush)
+        imp.wakeup(soon, LetYourHeartBeat);
+    else
+        imp.wakeup(1/withYourStress, LetYourHeartBeat);
+}
+
+function BePunished(greatly) {
+    withYourStress = withYourStress*greatly;
+}
+
+function BePampered(overly) {
+    withYourStress = withYourStress/overly;
+}
+
+agent.on("punish", BePunished);
+agent.on("pamper", BePampered);
+LetYourHeartBeat();
